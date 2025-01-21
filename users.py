@@ -3,17 +3,17 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import db
 
 def get_user(user_id):
-    sql = "SELECT id, username FROM users WHERE id = ?"
+    sql = "SELECT id, username FROM user WHERE id = ?"
     result = db.query(sql, [user_id])
     return result[0] if result else None
 
 def create_user(username, password):
     password_hash = generate_password_hash(password)
-    sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
+    sql = "INSERT INTO user (username, password_hash) VALUES (?, ?)"
     db.execute(sql, [username, password_hash])
 
 def check_login(username, password):
-    sql = "SELECT id, password_hash FROM users WHERE username = ?"
+    sql = "SELECT id, password_hash FROM user WHERE username = ?"
     result = db.query(sql, [username])
     if not result:
         return None

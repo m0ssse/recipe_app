@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ recipe.recipe_name }}{% endblock %}
+
+<p>Ainesosast:</p>
+<ul>
+{% block content %}
+{% for ingredient in ingredients %}
+<li>{{ingredient.ingredient_description}}</li>
+{% endfor %}
+</ul>
+<p>Työvaiheet:</p>
+<ol>
+{% for step in steps %}
+<li>{{step.step}}</li>
+{% endfor %}
+{% endblock %}
+</ol>

@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}Uusi resepti{% endblock %}
+
+{% block content %}
+<h2>Uusi resepti</h2>
+<form action="/create_recipe" method="post">
+  <p>
+    <label for="title">Otsikko:</label> <br />
+    <input type="text" name="title" id="title" maxlength="50" required />
+  </p>
+  <p>
+    <label for="ingredients">Ainesosat</label>: <br />
+    <p>Kirjoita tähän tarvittavat ainekset.</p>
+    <p>Kerro jokaisesta aineosasta myös tarvittava määrä.</p>
+    <textarea name="ingredients" id="ingredients" rows="8" cols="60" required></textarea>
+  </p>
+  <p>
+    <label for="steps">Ohjeet</label>: <br />
+    <p>Kirjoita tähän reseptin työvaiheet.</p>
+    <p>Kirjoita jokainen työvaihe omalle rivilleen.</p>
+    <textarea name="steps" id="steps" rows="8" cols="60" required></textarea>
+  </p>
+  <input type="submit" value="Lisää resepti" />
+</form>
+{% endblock %}

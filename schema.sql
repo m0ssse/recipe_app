@@ -1,38 +1,36 @@
-CREATE TABLE users (
+CREATE TABLE user (
     id INTEGER PRIMARY KEY,
     username TEXT UNIQUE,
     password_hash TEXT
 );
 
-CREATE TABLE recipes (
+CREATE TABLE recipe (
     id INTEGER PRIMARY KEY,
     recipe_name TEXT UNIQUE,
-    instructions TEXT,
-    user_id INTEGER REFERENCES users
+    user_id INTEGER REFERENCES user
 );
 
-CREATE TABLE ingredients_by_recipe (
+CREATE TABLE recipe_uses_ingredient (
     id INTEGER PRIMARY KEY,
-    recipe INTEGER REFERENCES recipes,
-    ingredient_name TEXT,
-    ingredient_amount TEXT
+    recipe_id INTEGER REFERENCES recipe,
+    ingredient_description TEXT
 );
 
-CREATE TABLE tags (
+CREATE TABLE recipe_has_step (
     id INTEGER PRIMARY KEY,
-    tag TEXT UNIQUE
+    recipe_id INTEGER REFERENCES recipe,
+    step TEXT
 );
 
-CREATE TABLE tags_by_recipe (
+CREATE TABLE recipe_has_tag (
     id INTEGER PRIMARY KEY,
-    recipe_id INTEGER REFERENCES recipes,
-    tag_id INTEGER REFERENCES tags
+    tag TEXT
 );
 
-CREATE TABLE reviews_by_recipe (
+CREATE TABLE review (
     id INTEGER PRIMARY KEY,
-    recipe_id INTEGER REFERENCES recipes,
-    user_id INTEGER REFERENCES users,
+    recipe_id INTEGER REFERENCES recipe,
+    user_id INTEGER REFERENCES user,
     score INTEGER,
     comment TEXT
 )
