@@ -1,18 +1,30 @@
 {% extends "layout.html" %}
 
 {% block title %}{{ recipe.recipe_name }}{% endblock %}
-
-<p>Ainesosast:</p>
-<ul>
 {% block content %}
+<p>{{ recipe.recipe_name }}</p>
+<p>Ainesosat:</p>
+<ul>
 {% for ingredient in ingredients %}
-<li>{{ingredient.ingredient_description}}</li>
+  <li>{{ ingredient.ingredient_description }}</li>
 {% endfor %}
 </ul>
 <p>Työvaiheet:</p>
 <ol>
 {% for step in steps %}
-<li>{{step.step}}</li>
+  <li>{{step.step}}</li>
 {% endfor %}
-{% endblock %}
 </ol>
+
+<form action="/review_recipe/{{ recipe.id }}", method="post">
+    <p><label for="comment">Arvostelu:</label> <br /></p>
+    <textarea name="comment" id="comment" rows="8" cols="60" required></textarea> <br/>
+    <label for="score">Arvosana:</label>
+    <select name="score" id="score">
+        {% for i in range(1, 11) %}
+        <option value={{i}}>{{i}}</option>
+        {% endfor %}
+    </select> </br>
+    <input type="submit" value="Arvostele" />
+</form>
+{% endblock %}

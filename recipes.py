@@ -1,5 +1,11 @@
 import db
 
+def get_all_recipes():
+    sql = """SELECT id, recipe_name 
+    from recipe
+    """
+    return db.query(sql, [])
+
 def get_recipe(recipe_id):
     sql = """SELECT id, recipe_name
             from recipe
@@ -45,3 +51,14 @@ def add_recipe(recipe_name, user_id, ingredients, steps, tags):
                 VALUES (?, ?)
         """
         db.execute(sql, [recipe_id, tag])
+
+def add_review(user_id, recipe_id, score, comment):
+        #remove existing review for recipe from user, if it exists
+        sql = """DELETE from review
+        WHERE review.user_id = ? AND review.recipe_id = ?
+        """
+        db.execute(sql, [user_id, recipe_id])
+        sql = """INSERT INTO review (user_id, recipe_id, score, comment)
+                VALUES (?, ?, ?, ?)
+        """
+        db.execute(sql, [user_id, recipe_id, score, comment])

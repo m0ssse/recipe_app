@@ -1,8 +1,12 @@
 {% extends "layout.html" %}
 
-{% block title %}Huutokauppa{% endblock %}
+{% block title %}Reseptisovellus{% endblock %}
 
 {% block content %}
-<h2>Testitesti</h2>
+<h2>Reseptit:</h2>
+{% for recipe in all_recipes %}
+<a href="/recipe/{{ recipe.id }}">{{ recipe.recipe_name }}</a></br>
+
+{% endfor %}
 
 {% endblock %}

@@ -16,7 +16,10 @@ def require_login():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    all_recipes = recipes.get_all_recipes()
+    print("asd")
+    print(all_recipes)
+    return render_template("index.html", all_recipes=all_recipes)
 
 @app.route("/register")
 def register():
@@ -71,7 +74,17 @@ def show_recipe(recipe_id):
 
     steps = recipes.get_steps(recipe_id)
     ingredients = recipes.get_ingredients(recipe_id)
-    return render_template("show_recipe.html", recipe=recipe, steps=steps, ingredients=ingredients)
+    return render_template("show_recipe.html", recipe=recipe[0], steps=steps, ingredients=ingredients)
+
+@app.route("/review_recipe/<int:recipe_id>", methods=["POST"])
+def review_recipe(recipe_id):
+    require_login()
+
+    comment = request.form["comment"]
+    score = request.form["score"]
+    user_id = session["user_id"]
+    recipes.add_review(user_id, recipe_id, score, comment)
+    return redirect("/recipe/" + str(recipe_id))
 
 @app.route("/create_recipe", methods=["POST"])
 def create_recipe():
