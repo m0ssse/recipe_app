@@ -15,7 +15,7 @@
   <li>{{step.step}}</li>
 {% endfor %}
 </ol>
-
+{% if session.user_id != recipe.id %}
 <form action="/review_recipe/{{ recipe.id }}", method="post">
     <p><label for="comment">Arvostelu:</label> <br /></p>
     <textarea name="comment" id="comment" rows="8" cols="60" required></textarea> <br/>
@@ -27,4 +27,22 @@
     </select> </br>
     <input type="submit" value="Arvostele" />
 </form>
+
+{% else %}
+<form action="/modify_recipe/{{ recipe.id }}" method="post">
+  <p>
+    <label for="ingredients">Muokkaa ainesosia</label>: <br />
+    <textarea name="ingredients" id="ingredients" rows="8" cols="60"></textarea>
+  </p>
+  <p>
+    <label for="steps">Muokkaa ohjetta</label>: <br />
+    <textarea name="steps" id="steps" rows="8" cols="60"></textarea>
+  </p>
+  <input type="submit" value="Muokkaa reseptiä" />
+</form>
+</br>
+<form action="/delete_recipe/{{ recipe.id }}" method="post">
+  <input type="submit" value="Poista resepti" />
+</form>
+{% endif %}
 {% endblock %}

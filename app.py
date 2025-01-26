@@ -98,6 +98,17 @@ def create_recipe():
     recipe_id = db.last_insert_id()
     return redirect("/recipe/" + str(recipe_id))
 
+@app.route("/modify_recipe/<int:recipe_id>", methods=["POST"])
+def modify_recipe(recipe_id):
+    require_login()
+    ingredients = request.form["ingredients"].split("\n")
+    steps = request.form["steps"].split("\n")
+    user_id = session["user_id"]
+
+    print(ingredients)
+    print(steps)
+    recipes.modify_recipe(recipe_id, ingredients=ingredients, steps=steps)
+    return redirect("/recipe/"+str(recipe_id))
 @app.route("/logout")
 def logout():
     del session["user_id"]
