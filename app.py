@@ -17,8 +17,6 @@ def require_login():
 @app.route("/")
 def index():
     all_recipes = recipes.get_all_recipes()
-    print("asd")
-    print(all_recipes)
     return render_template("index.html", all_recipes=all_recipes)
 
 @app.route("/register")
@@ -94,8 +92,7 @@ def create_recipe():
     steps = request.form["steps"].split("\n")
     user_id = session["user_id"]
 
-    recipes.add_recipe(recipe_name, user_id, ingredients, steps, [])
-    recipe_id = db.last_insert_id()
+    recipe_id = recipes.add_recipe(recipe_name, user_id, ingredients, steps, [])
     return redirect("/recipe/" + str(recipe_id))
 
 @app.route("/modify_recipe/<int:recipe_id>", methods=["POST"])
@@ -109,6 +106,26 @@ def modify_recipe(recipe_id):
     print(steps)
     recipes.modify_recipe(recipe_id, ingredients=ingredients, steps=steps)
     return redirect("/recipe/"+str(recipe_id))
+
+@app.route("/find_recipe")
+def find_recipe():
+    query = request.args.get("query")
+    if query:
+        results = recipes.find_recipes(query)
+        print(results)
+        if not results:
+            results = []
+    else:
+        query = ""
+        results = []
+    return render_template("find_recipe.html", query=query, results=results)
+
+@app.route("/delete_recipe/<int:recipe_id>", methods=["POST"])
+def delete_recipe(recipe_id):
+    require_login()
+    recipes.delete_recipe(recipe_id)
+    return redirect("/")
+
 @app.route("/logout")
 def logout():
     del session["user_id"]

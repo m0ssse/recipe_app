@@ -51,6 +51,8 @@ def add_recipe(recipe_name, user_id, ingredients, steps, tags):
                 VALUES (?, ?)
         """
         db.execute(sql, [recipe_id, tag])
+    
+    return recipe_id
 
 def modify_recipe(recipe_id, ingredients, steps):
     #if the form does not contain info for either steps or ingredients, the list passed as parameters will contain just an empty string
@@ -88,3 +90,23 @@ def add_review(user_id, recipe_id, score, comment):
             VALUES (?, ?, ?, ?)
     """
     db.execute(sql, [user_id, recipe_id, score, comment])
+
+def find_recipes(query):
+    sql = """SELECT DISTINCT recipe.id, recipe.recipe_name
+        FROM recipe, recipe_uses_ingredient, recipe_has_step
+        WHERE recipe.id = recipe_uses_ingredient.recipe_id AND recipe.id = recipe_has_step.recipe_id
+        AND (recipe.recipe_name LIKE ? OR recipe_uses_ingredient.ingredient_description LIKE ? OR recipe_has_step.step LIKE ?)"""
+
+    like = "%"+query+"%"
+    results = db.query(sql, [like, like, like])
+    print(results)
+    return results
+
+def delete_recipe(recipe_id):
+    tables = ["review", "recipe_uses_ingredient", "recipe_has_step"]
+    deletion_queries = [f"""DELETE from {table} WHERE {table}.recipe_id = ?
+    """ for table in tables]
+    deletion_queries.append("""DELETE from recipe where recipe.id = ?
+    """)
+    for sql in deletion_queries:
+        db.execute(sql, [recipe_id])
