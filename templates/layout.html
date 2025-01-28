@@ -16,11 +16,11 @@
   {% endif %}
 
   <p>
-    <a href="/">Etusivu</a>
+    <a href="/">Etusivu</a> |
   {% if session.user_id %}
-    <a href="/new_recipe">Uusi resepti</a>
-    <a href="/find_recipe">Reseptihaku</a>
-    <a href="/logout">Kirjaudu ulos</a>
+    <a href="/new_recipe">Uusi resepti</a> |
+    <a href="/find_recipe">Reseptihaku</a> |
+    <a href="/logout">Kirjaudu ulos</a> |
   {% else %}
     <a href="/login">Kirjaudu sisään</a> |
     <a href="/register">Luo tunnus</a>

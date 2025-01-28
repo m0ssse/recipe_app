@@ -3,10 +3,11 @@
 {% block title %}Reseptisovellus{% endblock %}
 
 {% block content %}
+{% if session.user_id %}
 <h2>Reseptit:</h2>
 {% for recipe in all_recipes %}
 <a href="/recipe/{{ recipe.id }}">{{ recipe.recipe_name }}</a></br>
 
 {% endfor %}
-
+{% endif %}
 {% endblock %}
