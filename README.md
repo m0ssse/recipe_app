@@ -12,20 +12,20 @@ Sovelluksella käyttäjät voivat jakaa reseptejä, sekä arvostella niitä
   
 ## Sovelluksen asennus
 
-Asenna ´flask´-kirjasto
+Asenna ```flask```-kirjasto
 
-$ pip install flask
+```$ pip install flask```
 
 Luo tietokantaan taulut
 
-$ sqlite3 database.db < schema.sql
+```$ sqlite3 database.db < schema.sql```
 
 Voit käynnistää sovelluksen komennolla
 
-$ flask run
+```$ flask run```
 
-TODO:
-Ominaisuusluottelossa mainitut puuttuvat toiminnot (arvostelujen näyttäminen, luokittelut)
-Tietoturva
-Syötteille kriteerit ja kriteerien validointi
-CSS
+## TODO:
+* Ominaisuusluottelossa mainitut puuttuvat toiminnot (käyttäjäsivu, arvostelujen näyttäminen, luokittelut)
+* Tietoturva
+* Syötteille kriteerit ja kriteerien validointi
+* CSS
