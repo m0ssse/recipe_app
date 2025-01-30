@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ recipe.recipe_name }}{% endblock %}
+{% block content %}
+<h2>Reseptin {{ recipe.recipe_name }} arvostelut:</h2>
+<p>Yhteensä {{ stats.N }} arvostelua, keskiarvo {{ stats.ave }}</p>
+<h2>Arvostelut</h2>
+<ul>
+    {% for review in reviews %}
+    <div class="review">
+        <p>Käyttäjältä <a href="/user/{{ review.userid }}">{{ review.username }}</a></div></p>
+        <p>Arvosana {{ review.score }}</p>
+        <p>Kommentti:</p>
+        <p>{{ review.comment }} </p>
+    </div>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -68,11 +68,18 @@ def new_recipe():
 
 @app.route("/recipe/<int:recipe_id>")
 def show_recipe(recipe_id):
-    recipe = recipes.get_recipe(recipe_id)
-
+    recipe = recipes.get_recipe(recipe_id)[0]
     steps = recipes.get_steps(recipe_id)
     ingredients = recipes.get_ingredients(recipe_id)
-    return render_template("show_recipe.html", recipe=recipe[0], steps=steps, ingredients=ingredients)
+    review_stats = recipes.get_review_statistics(recipe_id)
+    return render_template("show_recipe.html", recipe=recipe[0], steps=steps, ingredients=ingredients, stats=review_stats)
+
+@app.route("/reviews/<int:recipe_id>")
+def show_reviews(recipe_id):
+    recipe = recipes.get_recipe(recipe_id)[0]
+    review_stats = recipes.get_review_statistics(recipe_id)[0]
+    reviews = recipes.get_reviews(recipe_id)
+    return render_template("show_reviews.html", recipe=recipe, stats=review_stats, reviews=reviews)
 
 @app.route("/review_recipe/<int:recipe_id>", methods=["POST"])
 def review_recipe(recipe_id):

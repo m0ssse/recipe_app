@@ -91,6 +91,18 @@ def add_review(user_id, recipe_id, score, comment):
     """
     db.execute(sql, [user_id, recipe_id, score, comment])
 
+def get_reviews(recipe_id):
+    sql = """SELECT review.score, review.comment, user.id AS userid, user.username AS username
+        FROM review, user
+        WHERE review.recipe_id = ? AND review.user_id = user.id"""
+    return db.query(sql, [recipe_id])
+
+def get_review_statistics(recipe_id):
+    sql = """SELECT COUNT(*) as N, AVG(score) as ave
+        FROM review
+        WHERE review.recipe_id = ?"""
+    return db.query(sql, [recipe_id])
+
 def find_recipes(query):
     sql = """SELECT DISTINCT recipe.id, recipe.recipe_name
         FROM recipe, recipe_uses_ingredient, recipe_has_step

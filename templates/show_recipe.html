@@ -2,7 +2,7 @@
 
 {% block title %}{{ recipe.recipe_name }}{% endblock %}
 {% block content %}
-<p>{{ recipe.recipe_name }}</p>
+<p>{{ recipe.recipe_name }} yhteensä {{ stats.N}} <a href="/reviews/{{ recipe.id }}">arvostelua</a></p>
 <p>Ainesosat:</p>
 <ul>
 {% for ingredient in ingredients %}
