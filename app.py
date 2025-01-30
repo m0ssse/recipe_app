@@ -131,3 +131,11 @@ def logout():
     del session["user_id"]
     del session["username"]
     return redirect("/")
+
+@app.route("/user/<int:user_id>")
+def show_user(user_id):
+    user = users.get_user(user_id)
+    if not user:
+        abort(403)
+    recipes = users.get_recipes(user_id)
+    return render_template("show_user.html", user=user, recipes=recipes)

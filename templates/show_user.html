@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}Käyttäjä {{ user.username }}{% endblock %}
+
+{% block content %}
+<h2>Käyttäjä {{ user.username }}</h2>
+<p>
+  Käyttäjällä on yhteensä {{ recipes | count }} reseptiä.
+</p>
+<h3>Reseptit</h3>
+<ul>
+  {% for recipe in recipes %}
+  <li><a href="/recipe/{{ recipe.id }}">{{ recipe.recipe_name }}</a></li>
+  {% endfor %}
+</ul>
+{% endblock %}

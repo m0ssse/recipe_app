@@ -24,3 +24,8 @@ def check_login(username, password):
         return user_id
     else:
         return None
+
+def get_recipes(user_id):
+    sql = """SELECT recipe.id, recipe.recipe_name FROM recipe WHERE recipe.user_id = ?
+        """
+    return db.query(sql, [user_id])
