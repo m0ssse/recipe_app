@@ -8,7 +8,7 @@ Sovelluksella käyttäjät voivat jakaa reseptejä, sekä arvostella niitä
 * Käyttäjä voi jättää muiden käyttäjien lisäämistä resepteistä arvosteluja, jotka sisältävät arvosanan ja kommentin. (TEHTY)
 * Käyttäjä voi tarkastella kaikkia sovellukseen lisättyjä reseptejä. Jokaisesta reseptistä näytetään arvostelujen määrä sekä arvosanojen keskiarvo. Jokaisesta reseptistä on lisäksi oma sivunsa, jossa näkyvät kaikki kyseisen reseptin saamat arvostelut. (TEHTY)
 * Käyttäjä pystyy etsimään reseptejä hakusanalla (TEHTY)
-* Käyttäjä pystyy lisäämään resepteille luokitteluja (jälkiruoka, kasvisruoka, yms.) sekä etsimään reseptejä luokittelujen perusteella (TODO)
+* Käyttäjä pystyy lisäämään resepteille luokitteluja (jälkiruoka, kasvisruoka, yms.) sekä etsimään reseptejä luokittelujen perusteella (Luokittelut lisätty, haku pitää vielä toteuttaa)
   
 ## Sovelluksen asennus
 
@@ -26,7 +26,6 @@ Voit käynnistää sovelluksen komennolla
 
 ## TODO:
 * Ominaisuusluottelossa mainitut puuttuvat toiminnot (luokittelut)
-* Tietoturva
 * Syötteille kriteerit ja kriteerien validointi
 * Sivutus (ainakin reseptin saamille arvosteluille)
 * CSS
