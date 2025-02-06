@@ -1,5 +1,11 @@
 import db
 
+def get_all_tags():
+    sql = "SELECT * from tags"
+
+    return db.query(sql, [])
+    
+
 def get_all_recipes():
     sql = """SELECT id, recipe_name, user_id
     from recipe
@@ -27,6 +33,24 @@ def get_steps(recipe_id):
         """
     return db.query(sql, [recipe_id])
 
+def get_tags(recipe_id):
+    sql = """SELECT tags.id, tags.tag
+        FROM tags, recipe_has_tag
+        WHERE tags.id=recipe_has_tag.tag_id AND recipe_has_tag.recipe_id = ?
+    """
+
+    return db.query(sql, [recipe_id])
+
+def get_recipe_tags(recipe_id):
+    sql = """SELECT tags.id, tags.tag, IFNULL(0*tid+1, 0) found
+    FROM
+    tags
+    LEFT JOIN
+    (SELECT recipe_has_tag.tag_id tid from recipe_has_tag where recipe_has_tag.recipe_id = ?)
+    ON tags.id = tid
+    """
+    return db.query(sql, [recipe_id])
+
 def add_recipe(recipe_name, user_id, ingredients, steps, tags):
     sql = """INSERT INTO recipe (recipe_name, user_id)
             VALUES (?, ?)
@@ -47,14 +71,14 @@ def add_recipe(recipe_name, user_id, ingredients, steps, tags):
         db.execute(sql, [recipe_id, step])
     
     for tag in tags:
-        sql = """INSERT INTO recipe_has_tag (recipe_id, tag)
+        sql = """INSERT INTO recipe_has_tag (recipe_id, tag_id)
                 VALUES (?, ?)
         """
         db.execute(sql, [recipe_id, tag])
     
     return recipe_id
 
-def modify_recipe(recipe_id, ingredients, steps):
+def modify_recipe(recipe_id, ingredients, steps, tags):
     #if the form does not contain info for either steps or ingredients, the list passed as parameters will contain just an empty string
     #we therefore modify the relevant tables only if there is data to modify
     if ingredients[0]:
@@ -78,6 +102,13 @@ def modify_recipe(recipe_id, ingredients, steps):
             VALUES (?, ?)
             """
             db.execute(sql, [recipe_id, step])
+    sql = """DELETE from recipe_has_tag where recipe_has_tag.recipe_id = ?
+    """
+    db.execute(sql, [recipe_id])
+    for tag in tags:
+        sql = """INSERT INTO recipe_has_tag (recipe_id, tag_id)
+        VALUES (?, ?)"""
+        db.execute(sql, [recipe_id, tag])
         
 
 def add_review(user_id, recipe_id, score, comment):
@@ -115,7 +146,7 @@ def find_recipes(query):
     return results
 
 def delete_recipe(recipe_id):
-    tables = ["review", "recipe_uses_ingredient", "recipe_has_step"]
+    tables = ["review", "recipe_uses_ingredient", "recipe_has_step", "recipe_has_tag"]
     deletion_queries = [f"""DELETE from {table} WHERE {table}.recipe_id = ?
     """ for table in tables]
     deletion_queries.append("""DELETE from recipe where recipe.id = ?

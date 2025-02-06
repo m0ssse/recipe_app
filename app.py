@@ -25,9 +25,9 @@ def register():
 
 @app.route("/create", methods=["POST"])
 def create():
-    username = request.form["username"]
-    password1 = request.form["password1"]
-    password2 = request.form["password2"]
+    username = request.form.get("username")
+    password1 = request.form.get("password1")
+    password2 = request.form.get("password2")
     if password1 != password2:
         flash("VIRHE: salasanat eivät ole samat")
         return redirect("/register")
@@ -48,8 +48,8 @@ def login():
         return render_template("login.html")
 
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
+        username = request.form.get("username")
+        password = request.form.get("password")
 
         user_id = users.check_login(username, password)
         if user_id:
@@ -64,7 +64,31 @@ def login():
 @app.route("/new_recipe")
 def new_recipe():
     require_login()
-    return render_template("new_recipe.html")
+    tags = recipes.get_all_tags()
+    return render_template("new_recipe.html", tags=tags)
+
+@app.route("/create_recipe", methods=["POST"])
+def create_recipe():
+    require_login()
+    recipe_name = request.form.get("title")
+    ingredients = request.form.get("ingredients").split("\n")
+    steps = request.form.get("steps").split("\n")
+    tags = request.form.getlist("tag")
+    user_id = session["user_id"]
+    recipe_id = recipes.add_recipe(recipe_name, user_id, ingredients, steps, tags)
+    return redirect("/recipe/" + str(recipe_id))
+
+@app.route("/modify_recipe/<int:recipe_id>", methods=["POST"])
+def modify_recipe(recipe_id):
+    require_login()
+    ingredients = request.form.get("ingredients").split("\n")
+    steps = request.form.get("steps").split("\n")
+    tags = request.form.getlist("tag")
+    print(tags)
+    user_id = session["user_id"]
+
+    recipes.modify_recipe(recipe_id, ingredients=ingredients, steps=steps, tags=tags)
+    return redirect("/recipe/"+str(recipe_id))
 
 @app.route("/recipe/<int:recipe_id>")
 def show_recipe(recipe_id):
@@ -72,7 +96,8 @@ def show_recipe(recipe_id):
     steps = recipes.get_steps(recipe_id)
     ingredients = recipes.get_ingredients(recipe_id)
     review_stats = recipes.get_review_statistics(recipe_id)
-    return render_template("show_recipe.html", recipe=recipe[0], steps=steps, ingredients=ingredients, stats=review_stats)
+    recipe_tags = recipes.get_recipe_tags(recipe_id)
+    return render_template("show_recipe.html", recipe=recipe, steps=steps, ingredients=ingredients, recipe_tags=recipe_tags, stats=review_stats)
 
 @app.route("/reviews/<int:recipe_id>")
 def show_reviews(recipe_id):
@@ -85,34 +110,11 @@ def show_reviews(recipe_id):
 def review_recipe(recipe_id):
     require_login()
 
-    comment = request.form["comment"]
-    score = request.form["score"]
+    comment = request.form.get("comment")
+    score = request.form.get("score")
     user_id = session["user_id"]
     recipes.add_review(user_id, recipe_id, score, comment)
     return redirect("/recipe/" + str(recipe_id))
-
-@app.route("/create_recipe", methods=["POST"])
-def create_recipe():
-    require_login()
-    recipe_name = request.form["title"]
-    ingredients = request.form["ingredients"].split("\n")
-    steps = request.form["steps"].split("\n")
-    user_id = session["user_id"]
-
-    recipe_id = recipes.add_recipe(recipe_name, user_id, ingredients, steps, [])
-    return redirect("/recipe/" + str(recipe_id))
-
-@app.route("/modify_recipe/<int:recipe_id>", methods=["POST"])
-def modify_recipe(recipe_id):
-    require_login()
-    ingredients = request.form["ingredients"].split("\n")
-    steps = request.form["steps"].split("\n")
-    user_id = session["user_id"]
-
-    print(ingredients)
-    print(steps)
-    recipes.modify_recipe(recipe_id, ingredients=ingredients, steps=steps)
-    return redirect("/recipe/"+str(recipe_id))
 
 @app.route("/find_recipe")
 def find_recipe():

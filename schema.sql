@@ -22,9 +22,15 @@ CREATE TABLE recipe_has_step (
     step TEXT
 );
 
-CREATE TABLE recipe_has_tag (
+CREATE TABLE tags (
     id INTEGER PRIMARY KEY,
     tag TEXT
+);
+
+CREATE TABLE recipe_has_tag (
+    id INTEGER PRIMARY KEY,
+    recipe_id INTEGER REFERENCES recipe,
+    tag_id INTEGER REFEREMCES tags
 );
 
 CREATE TABLE review (

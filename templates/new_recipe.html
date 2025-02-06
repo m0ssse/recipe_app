@@ -13,13 +13,20 @@
     <label for="ingredients">Ainesosat</label>: <br />
     <p>Kirjoita tähän tarvittavat ainekset.</p>
     <p>Lisää jokainen aineosasa omalle rivilleen.</p>
-    <textarea name="ingredients" id="ingredients" rows="8" cols="60" required></textarea>
+    <textarea name="ingredients" id="ingredients" maxlength="1000" rows="8" cols="60" required></textarea>
   </p>
   <p>
     <label for="steps">Ohjeet</label>: <br />
     <p>Kirjoita tähän reseptin työvaiheet.</p>
     <p>Kirjoita jokainen työvaihe omalle rivilleen.</p>
-    <textarea name="steps" id="steps" rows="8" cols="60" required></textarea>
+    <textarea name="steps" id="steps" maxlength="1000" rows="8" cols="60" required></textarea>
+  </p>
+  <p>Tunnisteet:</p>
+  <p>
+  {% for tag in tags %}
+    <input type="checkbox" id={{tag.id}} value={{tag.id}} name="tag">
+    <label for="{{tag.tag}}">{{tag.tag}}</label>
+  {% endfor %}
   </p>
   <input type="submit" value="Lisää resepti" />
 </form>

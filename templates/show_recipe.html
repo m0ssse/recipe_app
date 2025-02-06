@@ -3,6 +3,7 @@
 {% block title %}{{ recipe.recipe_name }}{% endblock %}
 {% block content %}
 <p>{{ recipe.recipe_name }} yhteensä {{ stats.N}} <a href="/reviews/{{ recipe.id }}">arvostelua</a></p>
+
 <p>Ainesosat:</p>
 <ul>
 {% for ingredient in ingredients %}
@@ -16,6 +17,18 @@
 {% endfor %}
 </ol>
 {% if session.user_id != recipe.id %}
+<p>Tunnisteet:</p>
+<p>
+{% for tag in recipe_tags %}
+{% if tag.found %}
+  <input type="checkbox" id={{tag.id}} value={{tag.id}} name="tag" checked disabled>
+  <label for="{{tag.tag}}">{{tag.tag}}</label>
+{% else %}
+  <input type="checkbox" id={{tag.id}} value={{tag.id}} name="tag" disabled>
+  <label for="{{tag.tag}}">{{tag.tag}}</label>
+{% endif %}
+{% endfor %}
+</p>
 <form action="/review_recipe/{{ recipe.id }}", method="post">
     <p><label for="comment">Arvostelu:</label> <br /></p>
     <textarea name="comment" id="comment" rows="8" cols="60" required></textarea> <br/>
@@ -38,6 +51,19 @@
     <label for="steps">Muokkaa ohjetta</label>: <br />
     <textarea name="steps" id="steps" rows="8" cols="60"></textarea>
   </p>
+
+<p>Muokkaa tunnisteita: </p>
+<p>
+{% for tag in recipe_tags %}
+{% if tag.found %}
+  <input type="checkbox" id={{tag.id}} value={{tag.id}} name="tag" checked>
+  <label for="{{tag.tag}}">{{tag.tag}}</label>
+{% else %}
+  <input type="checkbox" id={{tag.id}} value={{tag.id}} name="tag">
+  <label for="{{tag.tag}}">{{tag.tag}}</label>
+{% endif %}
+{% endfor %}
+</p>
   <input type="submit" value="Muokkaa reseptiä" />
 </form>
 </br>
