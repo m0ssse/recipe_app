@@ -38,6 +38,7 @@
         <option value={{i}}>{{i}}</option>
         {% endfor %}
     </select> </br>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="submit" value="Arvostele" />
 </form>
 
@@ -69,6 +70,7 @@
 </br>
 <form action="/delete_recipe/{{ recipe.id }}" method="post">
   <input type="submit" value="Poista resepti" />
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
 </form>
 {% endif %}
 {% endblock %}

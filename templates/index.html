@@ -5,9 +5,14 @@
 {% block content %}
 {% if session.user_id %}
 <h2>Reseptit:</h2>
-{% for recipe in all_recipes %}
+{% for recipe in recipes_to_display %}
 <a href="/recipe/{{ recipe.id }}">{{ recipe.recipe_name }}</a></br>
 
 {% endfor %}
+<p>
+    <a href="/{{ page - 1 }}">&lt;&lt;</a>
+    Sivu {{ page }}/{{ page_count }}
+    <a href="/{{ page + 1 }}">&gt;&gt;</a>
+</p>
 {% endif %}
 {% endblock %}

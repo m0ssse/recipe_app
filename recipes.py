@@ -5,12 +5,25 @@ def get_all_tags():
 
     return db.query(sql, [])
     
-
 def get_all_recipes():
     sql = """SELECT id, recipe_name, user_id
     from recipe
     """
     return db.query(sql, [])
+
+def recipe_count():
+    sql = """SELECT COUNT(*) from recipe"""
+    return db.query(sql, [])[0][0]
+
+def get_recipes(page, page_size):
+    sql = """SELECT id, recipe_name, user_id
+    from recipe
+    ORDER BY id ASC
+    LIMIT ? OFFSET ?
+    """
+    limit = page_size
+    offset = page_size * (page - 1)
+    return db.query(sql, [limit, offset])
 
 def get_recipe(recipe_id):
     sql = """SELECT id, recipe_name, user_id
@@ -42,11 +55,13 @@ def get_tags(recipe_id):
     return db.query(sql, [recipe_id])
 
 def get_recipe_tags(recipe_id):
+    #this query returns a list of all tags with an additional column that has 1 if recipe with id recipe_id has that tag and 0 if not
+    #this is used to display a recipe's tags as well as allow corresponding checkboxes to be pre-checked when modifying a recipe
     sql = """SELECT tags.id, tags.tag, IFNULL(0*tid+1, 0) found
     FROM
     tags
     LEFT JOIN
-    (SELECT recipe_has_tag.tag_id tid from recipe_has_tag where recipe_has_tag.recipe_id = ?)
+    (SELECT recipe_has_tag.tag_id tid FROM recipe_has_tag WHERE recipe_has_tag.recipe_id = ?)
     ON tags.id = tid
     """
     return db.query(sql, [recipe_id])
@@ -122,11 +137,15 @@ def add_review(user_id, recipe_id, score, comment):
     """
     db.execute(sql, [user_id, recipe_id, score, comment])
 
-def get_reviews(recipe_id):
+def get_reviews(recipe_id, page_size, page):
     sql = """SELECT review.score, review.comment, user.id AS userid, user.username AS username
         FROM review, user
-        WHERE review.recipe_id = ? AND review.user_id = user.id"""
-    return db.query(sql, [recipe_id])
+        WHERE review.recipe_id = ? AND review.user_id = user.id
+        ORDER BY review.id ASC
+        LIMIT ? OFFSET ?"""
+    limit = page_size
+    offset = page_size * (page - 1)
+    return db.query(sql, [recipe_id, limit, offset])
 
 def get_review_statistics(recipe_id):
     sql = """SELECT COUNT(*) as N, AVG(score) as ave

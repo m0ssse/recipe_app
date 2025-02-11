@@ -28,6 +28,7 @@
     <label for="{{tag.tag}}">{{tag.tag}}</label>
   {% endfor %}
   </p>
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
   <input type="submit" value="Lisää resepti" />
 </form>
 {% endblock %}

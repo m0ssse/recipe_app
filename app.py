@@ -2,6 +2,8 @@ import sqlite3
 from flask import Flask
 from flask import abort, redirect, render_template, request, session, flash
 from werkzeug.security import check_password_hash, generate_password_hash
+
+import secrets
 import db
 import config
 import users
@@ -14,10 +16,26 @@ def require_login():
     if "user_id" not in session:
         abort(403)
 
+def check_csrf():
+    if "csrf_token" not in request.form:
+        abort(403)
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
+
+@app.route("/<int:page>")
 @app.route("/")
-def index():
-    all_recipes = recipes.get_all_recipes()
-    return render_template("index.html", all_recipes=all_recipes)
+def index(page=1):
+    page_size = 10
+    recipe_count = recipes.recipe_count()
+    page_count = (recipe_count-1)//page_size+1 #(n-1)//k+1 is the same thing as ceil(n/k)
+    #recipes_to_display = recipes.get_all_recipes()
+
+    if page < 1:
+        return redirect("/1")
+    if page > page_count:
+        return redirect("/" + str(page_count))
+    recipes_to_display = recipes.get_recipes(page, page_size)
+    return render_template("index.html", recipes_to_display=recipes_to_display, page=page, page_count=page_count)
 
 @app.route("/register")
 def register():
@@ -55,7 +73,7 @@ def login():
         if user_id:
             session["user_id"] = user_id
             session["username"] = username
-            #session["csrf_token"] = secrets.token_hex(16)
+            session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
             flash("VIRHE: väärä tunnus tai salasana")
@@ -70,6 +88,8 @@ def new_recipe():
 @app.route("/create_recipe", methods=["POST"])
 def create_recipe():
     require_login()
+    check_csrf()
+
     recipe_name = request.form.get("title")
     ingredients = request.form.get("ingredients").split("\n")
     steps = request.form.get("steps").split("\n")
@@ -81,6 +101,8 @@ def create_recipe():
 @app.route("/modify_recipe/<int:recipe_id>", methods=["POST"])
 def modify_recipe(recipe_id):
     require_login()
+    check_csrf()
+
     ingredients = request.form.get("ingredients").split("\n")
     steps = request.form.get("steps").split("\n")
     tags = request.form.getlist("tag")
@@ -99,16 +121,25 @@ def show_recipe(recipe_id):
     recipe_tags = recipes.get_recipe_tags(recipe_id)
     return render_template("show_recipe.html", recipe=recipe, steps=steps, ingredients=ingredients, recipe_tags=recipe_tags, stats=review_stats)
 
+@app.route("/reviews/<int:recipe_id>/<int:page>")
 @app.route("/reviews/<int:recipe_id>")
-def show_reviews(recipe_id):
+def show_reviews(recipe_id, page=1):
+    page_size = 10
     recipe = recipes.get_recipe(recipe_id)[0]
     review_stats = recipes.get_review_statistics(recipe_id)[0]
-    reviews = recipes.get_reviews(recipe_id)
-    return render_template("show_reviews.html", recipe=recipe, stats=review_stats, reviews=reviews)
+    review_count = review_stats["N"]
+    page_count = (review_count-1)//page_size+1
+    if page<1:
+        page = 1
+    if page>=page_count:
+        page = page_count
+    reviews_to_display = recipes.get_reviews(recipe_id, page_size, page)
+    return render_template("show_reviews.html", recipe=recipe, stats=review_stats, reviews=reviews_to_display, page=page, page_count=page_count)
 
 @app.route("/review_recipe/<int:recipe_id>", methods=["POST"])
 def review_recipe(recipe_id):
     require_login()
+    check_csrf()
 
     comment = request.form.get("comment")
     score = request.form.get("score")
@@ -132,6 +163,8 @@ def find_recipe():
 @app.route("/delete_recipe/<int:recipe_id>", methods=["POST"])
 def delete_recipe(recipe_id):
     require_login()
+    check_csrf()
+    
     recipes.delete_recipe(recipe_id)
     return redirect("/")
 
