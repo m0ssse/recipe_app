@@ -116,7 +116,11 @@ def modify_recipe(recipe_id):
     if recipe["user_id"]!=session["user_id"]:
         abort(403)
     ingredients = request.form.get("ingredients").split("\n")
+    if len(ingredients)>1000:
+        abort(403)
     steps = request.form.get("steps").split("\n")
+    if len(steps)>1000:
+        abort(403)
     tags = request.form.getlist("tag")
     user_id = session["user_id"]
 
