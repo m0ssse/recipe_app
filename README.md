@@ -8,7 +8,7 @@ Sovelluksella käyttäjät voivat jakaa reseptejä, sekä arvostella niitä
 * Käyttäjä voi jättää muiden käyttäjien lisäämistä resepteistä arvosteluja, jotka sisältävät arvosanan ja kommentin. (TEHTY)
 * Käyttäjä voi tarkastella kaikkia sovellukseen lisättyjä reseptejä. Jokaisesta reseptistä näytetään arvostelujen määrä sekä arvosanojen keskiarvo. Jokaisesta reseptistä on lisäksi oma sivunsa, jossa näkyvät kaikki kyseisen reseptin saamat arvostelut. (TEHTY)
 * Käyttäjä pystyy etsimään reseptejä hakusanalla (TEHTY)
-* Käyttäjä pystyy lisäämään resepteille luokitteluja (jälkiruoka, kasvisruoka, yms.) sekä etsimään reseptejä luokittelujen perusteella (Luokittelut lisätty, haku pitää vielä toteuttaa)
+* Käyttäjä pystyy lisäämään resepteille luokitteluja (jälkiruoka, kasvisruoka, yms.) sekä näyttämään reseptin luokittelut (TEHTY)
   
 ## Sovelluksen asennus
 
@@ -24,8 +24,11 @@ Voit käynnistää sovelluksen komennolla
 
 ```$ flask run```
 
+Mikäli haluat luoda testidataa tietokantaan, voit suorittaa skriptin ```create_dummy_data.py```, joka luo tietokantaan skriptissä määritellyn määrän käyttäjiä ja arvostelijoita, skriptissä määritellyn määrän reseptejä sekä skriptissä määritellyn määrän arvosteluja. Huomaa, että skriptin ajaminen poistaa tietokannasta sinne aiemmin lisätyt käyttäjät ja reseptit. Skripti suoritetaan komennolla ```$ python3 create_dummy_data.py```
+
 ## TODO:
 * Ominaisuusluottelossa mainitut puuttuvat toiminnot (luokittelut)
 * Syötteille kriteerit ja kriteerien validointi
-* Sivutus (ainakin reseptin saamille arvosteluille)
+* Indeksi tietokantaan
+* Testaus suurella datamäärällä
 * CSS

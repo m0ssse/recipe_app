@@ -11,6 +11,7 @@ import recipes
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
+page_size = 10
 
 def require_login():
     if "user_id" not in session:
@@ -22,20 +23,21 @@ def check_csrf():
     if request.form["csrf_token"] != session["csrf_token"]:
         abort(403)
 
+def page_count(n):
+    return (n-1)//page_size+1 #same as ceil(n/page_size)
+
 @app.route("/<int:page>")
 @app.route("/")
 def index(page=1):
-    page_size = 10
     recipe_count = recipes.recipe_count()
-    page_count = (recipe_count-1)//page_size+1 #(n-1)//k+1 is the same thing as ceil(n/k)
-    #recipes_to_display = recipes.get_all_recipes()
+    pages = page_count(recipe_count)
 
     if page < 1:
         return redirect("/1")
-    if page > page_count:
-        return redirect("/" + str(page_count))
+    if page > pages:
+        return redirect("/" + str(pages))
     recipes_to_display = recipes.get_recipes(page, page_size)
-    return render_template("index.html", recipes_to_display=recipes_to_display, page=page, page_count=page_count)
+    return render_template("index.html", recipes_to_display=recipes_to_display, page=page, page_count=pages)
 
 @app.route("/register")
 def register():
@@ -124,17 +126,16 @@ def show_recipe(recipe_id):
 @app.route("/reviews/<int:recipe_id>/<int:page>")
 @app.route("/reviews/<int:recipe_id>")
 def show_reviews(recipe_id, page=1):
-    page_size = 10
     recipe = recipes.get_recipe(recipe_id)[0]
     review_stats = recipes.get_review_statistics(recipe_id)[0]
     review_count = review_stats["N"]
-    page_count = (review_count-1)//page_size+1
+    pages = page_count(review_count)
     if page<1:
         page = 1
-    if page>=page_count:
-        page = page_count
+    if page>=pages:
+        page = pages
     reviews_to_display = recipes.get_reviews(recipe_id, page_size, page)
-    return render_template("show_reviews.html", recipe=recipe, stats=review_stats, reviews=reviews_to_display, page=page, page_count=page_count)
+    return render_template("show_reviews.html", recipe=recipe, stats=review_stats, reviews=reviews_to_display, page=page, page_count=pages)
 
 @app.route("/review_recipe/<int:recipe_id>", methods=["POST"])
 def review_recipe(recipe_id):
@@ -174,10 +175,17 @@ def logout():
     del session["username"]
     return redirect("/")
 
+@app.route("/user/<int:user_id>/<int:page>")
 @app.route("/user/<int:user_id>")
-def show_user(user_id):
+def show_user(user_id, page=1):
     user = users.get_user(user_id)
     if not user:
         abort(403)
-    recipes = users.get_recipes(user_id)
-    return render_template("show_user.html", user=user, recipes=recipes)
+    recipe_count = users.recipe_count(user_id)
+    pages = page_count(recipe_count)
+    if page<1:
+        page = 1
+    if page>pages:
+        page=pages
+    recipes_to_display = users.get_recipes(user_id, page, page_size)
+    return render_template("show_user.html", user=user, recipe_count=recipe_count, recipes=recipes_to_display, page=page, page_count=pages)

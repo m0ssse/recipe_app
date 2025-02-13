@@ -5,7 +5,7 @@
 {% block content %}
 <h2>Käyttäjä {{ user.username }}</h2>
 <p>
-  Käyttäjällä on yhteensä {{ recipes | count }} reseptiä.
+  Käyttäjällä on yhteensä {{ recipe_count }} reseptiä.
 </p>
 <h3>Reseptit</h3>
 <ul>
@@ -13,4 +13,9 @@
   <li><a href="/recipe/{{ recipe.id }}">{{ recipe.recipe_name }}</a></li>
   {% endfor %}
 </ul>
+<p>
+  <a href="/user/{{ user.id }}/{{ page - 1 }}">&lt;&lt;</a>
+  Sivu {{ page }}/{{ page_count }}
+  <a href="/user/{{ user.id }}/{{ page + 1 }}">&gt;&gt;</a>
+</p>
 {% endblock %}

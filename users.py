@@ -25,7 +25,14 @@ def check_login(username, password):
     else:
         return None
 
-def get_recipes(user_id):
+def get_recipes(user_id, page, page_size):
     sql = """SELECT recipe.id, recipe.recipe_name FROM recipe WHERE recipe.user_id = ?
+        LIMIT ? OFFSET ?
         """
-    return db.query(sql, [user_id])
+    offset = page_size * (page - 1)
+    limit = page_size
+    return db.query(sql, [user_id, limit, offset])
+
+def recipe_count(user_id):
+    sql = """SELECT COUNT(*) from recipe WHERE recipe.user_id=?"""
+    return db.query(sql, [user_id])[0][0]
