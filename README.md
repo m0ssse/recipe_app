@@ -27,8 +27,6 @@ Voit käynnistää sovelluksen komennolla
 Mikäli haluat luoda testidataa tietokantaan, voit suorittaa skriptin ```create_dummy_data.py```, joka luo tietokantaan skriptissä määritellyn määrän käyttäjiä ja arvostelijoita, skriptissä määritellyn määrän reseptejä sekä skriptissä määritellyn määrän arvosteluja. Huomaa, että skriptin ajaminen poistaa tietokannasta sinne aiemmin lisätyt käyttäjät ja reseptit. Skripti suoritetaan komennolla ```$ python3 create_dummy_data.py```
 
 ## TODO:
-* Ominaisuusluottelossa mainitut puuttuvat toiminnot (luokittelut)
-* Syötteille kriteerit ja kriteerien validointi
 * Indeksi tietokantaan
 * Testaus suurella datamäärällä
 * CSS
