@@ -93,8 +93,14 @@ def create_recipe():
     check_csrf()
 
     recipe_name = request.form.get("title")
+    if not recipe_name or len(recipe_name)>50:
+        abort(403)
     ingredients = request.form.get("ingredients").split("\n")
+    if not ingredients or len(ingredients)>1000:
+        abort(403)
     steps = request.form.get("steps").split("\n")
+    if not steps or len(steps)>1000:
+        abort(403)
     tags = request.form.getlist("tag")
     user_id = session["user_id"]
     recipe_id = recipes.add_recipe(recipe_name, user_id, ingredients, steps, tags)
@@ -104,11 +110,14 @@ def create_recipe():
 def modify_recipe(recipe_id):
     require_login()
     check_csrf()
-
+    recipe = recipes.get_recipe(recipe_id)
+    if not recipe:
+        abort(404)
+    if recipe["user_id"]!=session["user_id"]:
+        abort(403)
     ingredients = request.form.get("ingredients").split("\n")
     steps = request.form.get("steps").split("\n")
     tags = request.form.getlist("tag")
-    print(tags)
     user_id = session["user_id"]
 
     recipes.modify_recipe(recipe_id, ingredients=ingredients, steps=steps, tags=tags)
@@ -116,7 +125,10 @@ def modify_recipe(recipe_id):
 
 @app.route("/recipe/<int:recipe_id>")
 def show_recipe(recipe_id):
-    recipe = recipes.get_recipe(recipe_id)[0]
+    recipe = recipes.get_recipe(recipe_id)
+    if not recipe:
+        abort(404)
+    recipe = recipe[0]
     steps = recipes.get_steps(recipe_id)
     ingredients = recipes.get_ingredients(recipe_id)
     review_stats = recipes.get_review_statistics(recipe_id)
@@ -165,7 +177,11 @@ def find_recipe():
 def delete_recipe(recipe_id):
     require_login()
     check_csrf()
-    
+    recipe = recipes.get_recipe(recipe_id)
+    if not recipe:
+        abort(404)
+    if recipe["user_id"]!=session["user_id"]:
+        abort(403)
     recipes.delete_recipe(recipe_id)
     return redirect("/")
 
@@ -180,7 +196,7 @@ def logout():
 def show_user(user_id, page=1):
     user = users.get_user(user_id)
     if not user:
-        abort(403)
+        abort(404)
     recipe_count = users.recipe_count(user_id)
     pages = page_count(recipe_count)
     if page<1:
