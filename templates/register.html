@@ -12,12 +12,13 @@
   </p>
   <p>
     <label for="password1">Salasana</label>: <br />
-    <input type="password" name="password1" id="password1" />
+    <input type="password" name="password1" id="password1" minlength="{ {password_lower_limit} }"/>
   </p>
   <p>
     <label for="password2">Salasana uudestaan</label>: <br />
-    <input type="password" name="password2" id="password2" />
+    <input type="password" name="password2" id="password2" minlength="{ {password_lower_limit} }"/>
   </p>
   <input type="submit" value="Luo tunnus" />
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
 </form>
 {% endblock %}

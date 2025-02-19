@@ -12,6 +12,7 @@ import recipes
 app = Flask(__name__)
 app.secret_key = config.secret_key
 page_size = 10
+password_lower_limit = 8
 
 def require_login():
     if "user_id" not in session:
@@ -29,6 +30,8 @@ def page_count(n):
 @app.route("/<int:page>")
 @app.route("/")
 def index(page=1):
+    if "csrf_token" not in session:
+        session["csrf_token"] = secrets.token_hex(16)
     recipe_count = recipes.recipe_count()
     pages = page_count(recipe_count)
 
@@ -41,13 +44,20 @@ def index(page=1):
 
 @app.route("/register")
 def register():
-    return render_template("register.html")
+    return render_template("register.html", password_lower_limit=password_lower_limit)
 
 @app.route("/create", methods=["POST"])
 def create():
+    check_csrf()
     username = request.form.get("username")
     password1 = request.form.get("password1")
     password2 = request.form.get("password2")
+    if not username:
+        flash("VIRHE: anna käyttäjänimi")
+        return redirect("/register")
+    if len(password1) < password_lower_limit:
+        flash(f"VIRHE: salasanan tulee olla vähintään {password_lower_limit} merkkiä pitkä!")
+        return redirect("/register")
     if password1 != password2:
         flash("VIRHE: salasanat eivät ole samat")
         return redirect("/register")
@@ -135,7 +145,7 @@ def show_recipe(recipe_id):
     recipe = recipe[0]
     steps = recipes.get_steps(recipe_id)
     ingredients = recipes.get_ingredients(recipe_id)
-    review_stats = recipes.get_review_statistics(recipe_id)
+    review_stats = recipes.get_review_statistics(recipe_id)[0]
     recipe_tags = recipes.get_recipe_tags(recipe_id)
     return render_template("show_recipe.html", recipe=recipe, steps=steps, ingredients=ingredients, recipe_tags=recipe_tags, stats=review_stats)
 

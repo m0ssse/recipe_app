@@ -7,6 +7,7 @@
 <p>
   Käyttäjällä on yhteensä {{ recipe_count }} reseptiä.
 </p>
+{% if recipe_count %}
 <h3>Reseptit</h3>
 <ul>
   {% for recipe in recipes %}
@@ -18,4 +19,5 @@
   Sivu {{ page }}/{{ page_count }}
   <a href="/user/{{ user.id }}/{{ page + 1 }}">&gt;&gt;</a>
 </p>
+{% endif %}
 {% endblock %}
