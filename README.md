@@ -29,7 +29,9 @@ Mikäli haluat luoda testidataa tietokantaan, voit suorittaa skriptin ```create_
 ## Testi suurella datamäärällä
 
 Sovellusta testattiin suurella datamäärällä skriptin ```create_dummy_data.py```. Testejä tehtiin kaiken kaikkiaan kuusi kappaletta, tietokantaan lisättiin joko `10**5`, `*10**6` tai `10**7` arvostelua satunnaisille resepteille. Kaikki kolme testiä tehtiin ilman indeksiä ja indeksin kanssa. Yksittäisessä testissä tehtiin 10 pyyntöä sivulle `"http://127.0.0.1:5000/recipe/1"` ja mitattiin näihin kuluva aika. Tulokset on esitetty alla. Ajat on ilmoitettu sekunteina:
-N;no_index;index
-10000;0.142;0.0893
-100000;0.733;0.190
-1000000;6.668;1.693
+
+| reviews | no index | with index |
+| --------| -------- | ---------- |
+| 10000   | 0.142    | 0.089      |
+| 100000  | 0.733    | 0.190      |
+| 1000000 | 6.668    | 1.693      |
