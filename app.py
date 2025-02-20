@@ -3,6 +3,7 @@ from flask import Flask
 from flask import abort, redirect, render_template, request, session, flash
 from werkzeug.security import check_password_hash, generate_password_hash
 
+import markupsafe
 import secrets
 import db
 import config
@@ -26,6 +27,12 @@ def check_csrf():
 
 def page_count(n):
     return (n-1)//page_size+1 #same as ceil(n/page_size)
+
+@app.template_filter()
+def show_lines(content):
+    content = str(markupsafe.escape(content))
+    content = content.replace("\n", "<br />")
+    return markupsafe.Markup(content)
 
 @app.route("/<int:page>")
 @app.route("/")
@@ -114,6 +121,7 @@ def create_recipe():
     tags = request.form.getlist("tag")
     user_id = session["user_id"]
     recipe_id = recipes.add_recipe(recipe_name, user_id, ingredients, steps, tags)
+    flash("Resepti lisätty!")
     return redirect("/recipe/" + str(recipe_id))
 
 @app.route("/modify_recipe/<int:recipe_id>", methods=["POST"])
@@ -135,6 +143,7 @@ def modify_recipe(recipe_id):
     user_id = session["user_id"]
 
     recipes.modify_recipe(recipe_id, ingredients=ingredients, steps=steps, tags=tags)
+    flash("Reseptiä muokattu!")
     return redirect("/recipe/"+str(recipe_id))
 
 @app.route("/recipe/<int:recipe_id>")
@@ -172,14 +181,15 @@ def review_recipe(recipe_id):
     score = request.form.get("score")
     user_id = session["user_id"]
     recipes.add_review(user_id, recipe_id, score, comment)
+    flash("Arvostelu lisätty!")
     return redirect("/recipe/" + str(recipe_id))
+
 
 @app.route("/find_recipe")
 def find_recipe():
     query = request.args.get("query")
     if query:
         results = recipes.find_recipes(query)
-        print(results)
         if not results:
             results = []
     else:
@@ -191,12 +201,14 @@ def find_recipe():
 def delete_recipe(recipe_id):
     require_login()
     check_csrf()
+    
     recipe = recipes.get_recipe(recipe_id)
     if not recipe:
         abort(404)
-    if recipe["user_id"]!=session["user_id"]:
+    if recipe[0]["user_id"]!=session["user_id"]:
         abort(403)
     recipes.delete_recipe(recipe_id)
+    flash("Resepti poistettu!")
     return redirect("/")
 
 @app.route("/logout")

@@ -1,0 +1,48 @@
+body {
+    margin: auto;
+    max-width: 50em;
+    font-family: sans-serif;
+    background-color: lightblue;
+}
+
+h1, h2 {
+    margin: 0;
+  }
+
+.nav {
+    background-color: lightgrey;
+}
+
+.review {
+    background-color: white;
+    border: 2px solid black;
+    margin: 1em;
+    padding: 0.2em 0.5em;
+}
+
+.ingredients {
+    border: 1px solid black;
+    margin: 1em;
+    padding: 0.2em 0.5em;
+}
+
+.steps {
+    border: 1px solid black;
+    margin: 1em;
+    padding: 0.2em 0.5em;
+}
+
+.tags {
+    border: 1px solid black;
+    margin: 1em;
+    padding: 0.2em 0.5em;
+}
+
+.recipe_listing {
+    line-height: 1.5;
+}
+
+.header {
+    background-color: mediumseagreen;
+}
+

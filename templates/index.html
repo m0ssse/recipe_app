@@ -1,18 +1,21 @@
+<link rel="stylesheet" href="/static/main.css">
 {% extends "layout.html" %}
 
 {% block title %}Reseptisovellus{% endblock %}
 
 {% block content %}
 {% if session.user_id %}
+<div class="recipe_listing">
 <h2>Reseptit:</h2>
-{% for recipe in recipes_to_display %}
-<a href="/recipe/{{ recipe.id }}">{{ recipe.recipe_name }}</a></br>
+    {% for recipe in recipes_to_display %}
+    <a href="/recipe/{{ recipe.id }}">{{ recipe.recipe_name }}</a></br>
 
-{% endfor %}
-<p>
-    <a href="/{{ page - 1 }}">&lt;&lt;</a>
-    Sivu {{ page }}/{{ page_count }}
-    <a href="/{{ page + 1 }}">&gt;&gt;</a>
-</p>
+    {% endfor %}
+    <p>
+        <a href="/{{ page - 1 }}">&lt;&lt;</a>
+        Sivu {{ page }}/{{ page_count }}
+        <a href="/{{ page + 1 }}">&gt;&gt;</a>
+    </p>
+</div>
 {% endif %}
 {% endblock %}

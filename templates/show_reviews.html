@@ -8,16 +8,16 @@
 <ul>
     {% for review in reviews %}
     <div class="review">
-        <p>Käyttäjältä <a href="/user/{{ review.userid }}">{{ review.username }}</a></div></p>
-        <p>Arvosana {{ review.score }}</p>
+        <p>Käyttäjältä <a href="/user/{{ review.userid }}">{{ review.username }}</a></p>
+        <p>Arvosana: {{ review.score }}</p>
         <p>Kommentti:</p>
-        <p>{{ review.comment }} </p>
+        <p>{{ review.comment | show_lines }} </p>
     </div>
     {% endfor %}
 </ul>
 <p>
     <a href="/reviews/{{ recipe.id }}/{{ page - 1 }}">&lt;&lt;</a>
-    Sivu {{ page }}/{{ stats.N }}
+    Sivu {{ page }}/{{ pages }}
     <a href="/reviews/{{ recipe.id }}/{{ page + 1 }}">&gt;&gt;</a>
 </p>
 {% endblock %}

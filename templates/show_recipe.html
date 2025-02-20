@@ -2,33 +2,39 @@
 
 {% block title %}{{ recipe.recipe_name }}{% endblock %}
 {% block content %}
-<p>{{ recipe.recipe_name }} yhteensä {{ stats.N}} <a href="/reviews/{{ recipe.id }}">arvostelua</a></p>
+<p>{{ recipe.recipe_name }}, yhteensä {{ stats.N}} <a href="/reviews/{{ recipe.id }}">arvostelua</a></p>
 
+<div class="ingredients">
 <p>Ainesosat:</p>
-<ul>
-{% for ingredient in ingredients %}
-  <li>{{ ingredient.ingredient_description }}</li>
-{% endfor %}
-</ul>
-<p>Työvaiheet:</p>
-<ol>
-{% for step in steps %}
-  <li>{{step.step}}</li>
-{% endfor %}
-</ol>
-{% if session.user_id != recipe.id %}
-<p>Tunnisteet:</p>
-<p>
-{% for tag in recipe_tags %}
-{% if tag.found %}
-  <input type="checkbox" id={{tag.id}} value={{tag.id}} name="tag" checked disabled>
-  <label for="{{tag.tag}}">{{tag.tag}}</label>
-{% else %}
-  <input type="checkbox" id={{tag.id}} value={{tag.id}} name="tag" disabled>
-  <label for="{{tag.tag}}">{{tag.tag}}</label>
-{% endif %}
-{% endfor %}
-</p>
+  <ul>
+  {% for ingredient in ingredients %}
+    <li>{{ ingredient.ingredient_description }}</li>
+  {% endfor %}
+  </ul>
+</div>
+<div class="steps">
+  <p>Työvaiheet:</p>
+  <ol>
+  {% for step in steps %}
+    <li>{{step.step}}</li>
+  {% endfor %}
+  </ol>
+</div>
+<div class="tags">
+{% if session.user_id != recipe.user_id %}
+  <p>Tunnisteet:</p>
+  <p>
+    {% for tag in recipe_tags %}
+    {% if tag.found %}
+      <input type="checkbox" id={{tag.id}} value={{tag.id}} name="tag" checked disabled>
+      <label for="{{tag.tag}}">{{tag.tag}}</label>
+    {% else %}
+      <input type="checkbox" id={{tag.id}} value={{tag.id}} name="tag" disabled>
+      <label for="{{tag.tag}}">{{tag.tag}}</label>
+    {% endif %}
+    {% endfor %}
+  </p>
+</div>
 <form action="/review_recipe/{{ recipe.id }}", method="post">
     <p><label for="comment">Arvostelu:</label> <br /></p>
     <textarea name="comment" id="comment" rows="8" cols="60" required></textarea> <br/>

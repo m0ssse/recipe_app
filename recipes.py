@@ -148,7 +148,7 @@ def get_reviews(recipe_id, page_size, page):
     return db.query(sql, [recipe_id, limit, offset])
 
 def get_review_statistics(recipe_id):
-    sql = """SELECT COUNT(*) as N, AVG(score) as ave
+    sql = """SELECT COUNT(*) as N, ROUND(AVG(score), 2) as ave
         FROM review
         WHERE review.recipe_id = ?"""
     return db.query(sql, [recipe_id])
@@ -157,11 +157,11 @@ def find_recipes(query):
     sql = """SELECT DISTINCT recipe.id, recipe.recipe_name
         FROM recipe, recipe_uses_ingredient, recipe_has_step
         WHERE recipe.id = recipe_uses_ingredient.recipe_id AND recipe.id = recipe_has_step.recipe_id
-        AND (recipe.recipe_name LIKE ? OR recipe_uses_ingredient.ingredient_description LIKE ? OR recipe_has_step.step LIKE ?)"""
+        AND (recipe.recipe_name LIKE ? OR recipe_uses_ingredient.ingredient_description LIKE ? OR recipe_has_step.step LIKE ?)
+        ORDER BY recipe.id ASC"""
 
     like = "%"+query+"%"
     results = db.query(sql, [like, like, like])
-    print(results)
     return results
 
 def delete_recipe(recipe_id):

@@ -7,33 +7,36 @@
 </head>
 
 <body>
+  <div class="header">
   <h1>Reseptisovellus</h1>
-
+  </div>
   {% if session.user_id %}
   <p>
     Olet kirjautunut nimellä <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
   </p>
   {% endif %}
-
-  <p>
-    <a href="/">Etusivu</a> |
-  {% if session.user_id %}
-    <a href="/new_recipe">Uusi resepti</a> |
-    <a href="/find_recipe">Reseptihaku</a> |
-    <a href="/logout">Kirjaudu ulos</a> |
-  {% else %}
-    <a href="/login">Kirjaudu sisään</a> |
-    <a href="/register">Luo tunnus</a>
-  {% endif %}
-  </p>
-
+  <div class="nav">
+    <p>
+      <a href="/">Etusivu</a> |
+    {% if session.user_id %}
+      <a href="/new_recipe">Uusi resepti</a> |
+      <a href="/find_recipe">Reseptihaku</a> |
+      <a href="/logout">Kirjaudu ulos</a> |
+    {% else %}
+      <a href="/login">Kirjaudu sisään</a> |
+      <a href="/register">Luo tunnus</a>
+      
+    {% endif %}
+    </p>
+  </div>
   {% for message in get_flashed_messages() %}
   <div class="info">
-    {{ message }}
+    <b>{{ message }}</b>
   </div>
   {% endfor %}
 
   {% block content %}{% endblock %}  
+  <br/>
 </body>
 
 </html>

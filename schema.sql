@@ -40,3 +40,5 @@ CREATE TABLE review (
     score INTEGER,
     comment TEXT
 )
+
+CREATE INDEX idx_reviews ON review (recipe_id)
