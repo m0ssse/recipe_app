@@ -15,7 +15,7 @@ db.execute("DELETE from user")
 user_count = 10
 reviewer_count = 10
 recipe_count = 100
-review_count = 100000
+review_count = 10**7
 
 def generate_string(length):
     name = ""

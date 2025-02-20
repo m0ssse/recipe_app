@@ -39,6 +39,6 @@ CREATE TABLE review (
     user_id INTEGER REFERENCES user,
     score INTEGER,
     comment TEXT
-)
+);
 
-CREATE INDEX idx_reviews ON review (recipe_id)
+CREATE INDEX idx_reviews ON review (recipe_id);
