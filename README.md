@@ -20,6 +20,10 @@ Luo tietokantaan taulut
 
 ```$ sqlite3 database.db < schema.sql```
 
+Lisää tietokantaan tunnisteet komennolla
+
+```$ sqlite3 database.db < init.sql```
+
 Voit käynnistää sovelluksen komennolla
 
 ```$ flask run```

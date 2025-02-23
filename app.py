@@ -40,7 +40,7 @@ def index(page=1):
     if "csrf_token" not in session:
         session["csrf_token"] = secrets.token_hex(16)
     recipe_count = recipes.recipe_count()
-    pages = page_count(recipe_count)
+    pages = max(1, page_count(recipe_count))
 
     if page < 1:
         return redirect("/1")
