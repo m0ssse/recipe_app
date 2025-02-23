@@ -26,7 +26,7 @@ def check_csrf():
         abort(403)
 
 def page_count(n):
-    return max(1, (n-1)//page_size+1) #same as ceil(n/page_size)
+    return max(1, (n-1)//page_size+1) #same as max(1, ceil(n/page_size))
 
 @app.template_filter()
 def show_lines(content):
