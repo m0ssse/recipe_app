@@ -1,1 +1,1 @@
-secret_key = "4d6ababaec556ffa03f3a21a1ef9460c"
+SECRET_KEY = "4d6ababaec556ffa03f3a21a1ef9460c"

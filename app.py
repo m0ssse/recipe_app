@@ -1,7 +1,7 @@
 import sqlite3
 from flask import Flask
 from flask import abort, redirect, render_template, request, session, flash
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import generate_password_hash
 
 import markupsafe
 import secrets
@@ -11,9 +11,9 @@ import users
 import recipes
 
 app = Flask(__name__)
-app.secret_key = config.secret_key
-page_size = 10
-password_lower_limit = 8
+app.secret_key = config.SECRET_KEY
+PAGE_SIZE = 10
+PASSWORD_LOWER_LIMIT = 8
 
 def require_login():
     if "user_id" not in session:
@@ -26,7 +26,7 @@ def check_csrf():
         abort(403)
 
 def page_count(n):
-    return max(1, (n-1)//page_size+1) #same as max(1, ceil(n/page_size))
+    return max(1, (n-1)//PAGE_SIZE+1) #same as max(1, ceil(n/page_size))
 
 @app.template_filter()
 def show_lines(content):
@@ -46,12 +46,12 @@ def index(page=1):
         return redirect("/1")
     if page > pages:
         return redirect("/" + str(pages))
-    recipes_to_display = recipes.get_recipes(page, page_size)
+    recipes_to_display = recipes.get_recipes(page, PAGE_SIZE)
     return render_template("index.html", recipes_to_display=recipes_to_display, page=page, page_count=pages)
 
 @app.route("/register")
 def register():
-    return render_template("register.html", password_lower_limit=password_lower_limit)
+    return render_template("register.html", password_lower_limit=PASSWORD_LOWER_LIMIT)
 
 @app.route("/create", methods=["POST"])
 def create():
@@ -62,8 +62,8 @@ def create():
     if not username:
         flash("VIRHE: anna käyttäjänimi")
         return redirect("/register")
-    if len(password1) < password_lower_limit:
-        flash(f"VIRHE: salasanan tulee olla vähintään {password_lower_limit} merkkiä pitkä!")
+    if len(password1) < PASSWORD_LOWER_LIMIT:
+        flash(f"VIRHE: salasanan tulee olla vähintään {PASSWORD_LOWER_LIMIT} merkkiä pitkä!")
         return redirect("/register")
     if password1 != password2:
         flash("VIRHE: salasanat eivät ole samat")
@@ -94,9 +94,9 @@ def login():
             session["username"] = username
             session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
-        else:
-            flash("VIRHE: väärä tunnus tai salasana")
-            return redirect("/login")
+
+        flash("VIRHE: väärä tunnus tai salasana")
+        return redirect("/login")
 
 @app.route("/new_recipe")
 def new_recipe():
@@ -131,16 +131,17 @@ def modify_recipe(recipe_id):
     recipe = recipes.get_recipe(recipe_id)
     if not recipe:
         abort(404)
-    if recipe["user_id"]!=session["user_id"]:
+    if recipe[0]["user_id"]!=session["user_id"]:
         abort(403)
     ingredients = request.form.get("ingredients").split("\n")
     if len(ingredients)>1000:
-        abort(403)
+        flash("Ainesosaluettelo saa olla korkeintaan 1000 merkkiä pitkä!")
+        return redirect("/recipe/"+str(recipe_id))
     steps = request.form.get("steps").split("\n")
     if len(steps)>1000:
-        abort(403)
+        flash("Vaiheluettelo saa olla korkeintaan 1000 merkkiä pitkä!")
+        return redirect("/recipe/"+str(recipe_id))
     tags = request.form.getlist("tag")
-    user_id = session["user_id"]
 
     recipes.modify_recipe(recipe_id, ingredients=ingredients, steps=steps, tags=tags)
     flash("Reseptiä muokattu!")
@@ -165,11 +166,10 @@ def show_reviews(recipe_id, page=1):
     review_stats = recipes.get_review_statistics(recipe_id)[0]
     review_count = review_stats["N"]
     pages = page_count(review_count)
-    if page<1:
-        page = 1
+    page = min(pages, max(page, 1))
     if page>=pages:
         page = pages
-    reviews_to_display = recipes.get_reviews(recipe_id, page_size, page)
+    reviews_to_display = recipes.get_reviews(recipe_id, PAGE_SIZE, page)
     return render_template("show_reviews.html", recipe=recipe, stats=review_stats, reviews=reviews_to_display, page=page, page_count=pages)
 
 @app.route("/review_recipe/<int:recipe_id>", methods=["POST"])
@@ -201,7 +201,7 @@ def find_recipe():
 def delete_recipe(recipe_id):
     require_login()
     check_csrf()
-    
+
     recipe = recipes.get_recipe(recipe_id)
     if not recipe:
         abort(404)
@@ -225,9 +225,6 @@ def show_user(user_id, page=1):
         abort(404)
     recipe_count = users.recipe_count(user_id)
     pages = page_count(recipe_count)
-    if page<1:
-        page = 1
-    if page>pages:
-        page=pages
-    recipes_to_display = users.get_recipes(user_id, page, page_size)
+    page = min(pages, max(page, 1))
+    recipes_to_display = users.get_recipes(user_id, page, PAGE_SIZE)
     return render_template("show_user.html", user=user, recipe_count=recipe_count, recipes=recipes_to_display, page=page, page_count=pages)
